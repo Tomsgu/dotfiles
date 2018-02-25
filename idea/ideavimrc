@@ -1,0 +1,6 @@
+imap jj <Esc>
+set showmode
+set clipboard=unnamed           " Use a system clipboard.
+set visualbell
+set noerrorbells
+
