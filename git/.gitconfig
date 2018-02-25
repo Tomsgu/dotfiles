@@ -1,0 +1,12 @@
+[user]
+	name = Tomas
+	email = tomasjakll@gmail.com
+[core]
+	editor = vim
+	excludesfile = /home/tomsgu/.gitignore_global
+[alias]
+	st = status
+	ci = commit
+	co = checkout
+	br = branch
+	ll = log --oneline --graph --all --decorate
