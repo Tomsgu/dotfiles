@@ -4,9 +4,12 @@
 [core]
 	editor = vim
 	excludesfile = /home/tomsgu/.gitignore_global
+	quotepath = false
 [alias]
 	st = status
 	ci = commit
 	co = checkout
 	br = branch
 	ll = log --oneline --graph --all --decorate
+[credential]
+	helper = cache

@@ -3,4 +3,4 @@ set showmode
 set clipboard=unnamed           " Use a system clipboard.
 set visualbell
 set noerrorbells
-
+set so=999
