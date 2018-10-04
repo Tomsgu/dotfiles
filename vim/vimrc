@@ -1,54 +1,52 @@
 "------------------------------------------------------------------------------
-" Vundle plugins
+" Plugins setup
 "------------------------------------------------------------------------------
 set nocompatible " Disable vi-compatibility.
-filetype off     " Required by vundle.
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+" Specify directory for plugins.
+call plug#begin('~/.vim/plugged')
+Plug 'scrooloose/nerdtree'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+Plug 'altercation/vim-colors-solarized'
+Plug 'itchyny/lightline.vim'
+Plug 'scrooloose/syntastic'
+Plug 'shawncplus/phpcomplete.vim'
+Plug 'vimwiki/vimwiki'
+"Plug 'ctrlp.vim'
+"Plug 'vim-airline/vim-airline'
+"Plug 'vim-airline/vim-airline-themes'
+call plug#end()
 
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
-
-" Fuzzy searching by ctrl + p
-Plugin 'ctrlp.vim'
-
-" Autocompletion
-Plugin 'Valloric/YouCompleteMe'
-
-" NERDtree sidebar 
-Plugin 'scrooloose/nerdtree'
-Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
-
-" Solarized theme
-Plugin 'altercation/vim-colors-solarized'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-
-" Syntax checking
-Plugin 'scrooloose/syntastic'
-
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
-"-------------------------------------------------------------------------------
-"ctrlp plugin
+"------------------------------------------------------------------------------
+"ctrlp plugin setup
 let g:ctrlp_match_window = 'bottom,order:ttb' " sort results from top to bottom
-"
 set t_Co=256
 set guifont=menlo\ for\ powerline:h13
 set linespace=13
-colorscheme solarized
-set background=dark
 
-"-------------------------------------------------------------------------------
-" Airline plugin
+"------------------------------------------------------------------------------
+" Set solarized colorscheme
+let g:solarized_termtrans = 1
+let g:solarized_termcolors=256
+set background=light
+colorscheme solarized
+
+"------------------------------------------------------------------------------
+" Airline plugin setup
 let g:airline_powerline_fonts = 1
+let g:lightline = { 'colorscheme': 'solarized', }
 set laststatus=2                              " Without this it cannot be shown.
 set ttimeoutlen=50
 
+"------------------------------------------------------------------------------
+" NERDtree setup
+" 1. If the NERDtree is the last window open close it as well.
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" 2. Open/close NERDTree by <ctrl-n> key.
+map <C-n> :NERDTreeToggle<CR>
 
+"-----------------------------------------------------------------------------
+" Vim setup
 set showmode                    " always show what mode we're currently editing in
 set nowrap                      " don't wrap lines
 set tabstop=4                   " a tab is four spaces
@@ -65,19 +63,20 @@ set number                      " always show line numbers
 set ignorecase                  " ignore case when searching
 set smartcase                   " ignore case if search pattern is all lowercase,
 set timeout timeoutlen=200 ttimeoutlen=100
-set visualbell           " don't beep
-set noerrorbells         " don't beep
-set autowrite  "Save on buffer switch
+set visualbell                  " don't beep
+set noerrorbells                " don't beep
+set noeb vb t_vb=               " Disable screen flashing
+set autowrite                   "Save on buffer switch
 set mouse=a
-"set clipboard=unnamed           " Use a system clipboard.
+set noshowmode                  " Don't show the mode, lightline already shows mode info.
+set clipboard=unnamedplus           " Use a system clipboard.
 imap jj <Esc>
 map <C-l> mzgg=G`z
-"
+
 " easier move screen up/down
 nmap <C-j> <C-e>
 nmap <C-k> <C-y>
 syntax enable
-
 
 " Display lines
 set number
@@ -87,10 +86,4 @@ set wildmode=full
 set shiftwidth=4
 filetype plugin indent on
 
-"---------------------------------------------------------------------------------------------------
-" NERDtree settings
-" 1. If the NERDtree is the last window open close it as well.
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-" 2. Open/close NERDTree by <ctrl-n> key.
-map <C-n> :NERDTreeToggle<CR>
 
