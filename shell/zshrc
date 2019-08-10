@@ -75,6 +75,11 @@ plugins=(git tmux emoji)
 # export SSH_KEY_PATH="~/.ssh/rsa_id"
 alias ssh-add='ssh-add -t 1h'
 
+# Hide user@hostname prefix
+DEFAULT_USER='tomsgu'
+# redefine prompt_context for hiding user@hostname
+prompt_context () { }
+
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
@@ -84,6 +89,9 @@ alias ssh-add='ssh-add -t 1h'
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+# Cargo aliases
+alias cargo='cargo --color always'
+
 ZSH_CACHE_DIR=$HOME/.cache/oh-my-zsh
 if [[ ! -d $ZSH_CACHE_DIR ]]; then
   mkdir $ZSH_CACHE_DIR
@@ -92,3 +100,5 @@ fi
 source $ZSH/oh-my-zsh.sh
 unset zle_bracketed_paste
 export ATHAME_SHOW_MODE=0
+export GOPATH=~/go
+export PATH="$HOME/.cargo/bin:$PATH"
