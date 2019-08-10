@@ -28,7 +28,7 @@ set linespace=13
 " Set solarized colorscheme
 let g:solarized_termtrans = 1
 let g:solarized_termcolors=256
-set background=light
+set background=dark
 colorscheme solarized
 
 "------------------------------------------------------------------------------
@@ -44,6 +44,17 @@ set ttimeoutlen=50
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 " 2. Open/close NERDTree by <ctrl-n> key.
 map <C-n> :NERDTreeToggle<CR>
+
+"------------------------------------------------------------------------------
+" vimwiki setup
+let g:vimwiki_list = [{'path': '~/vimwiki/',
+            \ 'syntax': 'markdown', 'ext': '.md'}] " Use markdown syntax
+let g:vimwiki_customwiki2html=$HOME.'/.vim/plugged/vimwiki/autoload/vimwiki/customwiki2html.sh'
+
+"-----------------------------------------------------------------------------
+" right side horizontal line with 100 character length
+let &colorcolumn=join(range(101,999),",")
+highlight ColorColumn ctermbg=4
 
 "-----------------------------------------------------------------------------
 " Vim setup
@@ -85,5 +96,3 @@ highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE gui=NONE gui
 set wildmode=full
 set shiftwidth=4
 filetype plugin indent on
-
-
