@@ -125,6 +125,7 @@ done
 #----- Files to symlink
 declare -a FILES_TO_SYMLINK=(
 'shell/zshrc'
+'shell/zprofile'
 
 'vim/vimrc'
 
