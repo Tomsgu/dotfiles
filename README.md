@@ -1,7 +1,6 @@
-# dotfiles
-My linux dotfiles.
+# Tomsgu dotfiles
 
-## How to setup a new pc
+## Setup a new pc
 ```sh
 # clone the rep
 git clone --bare git@github.com:Tomsgu/dotfiles.git $HOME/.dotfiles
