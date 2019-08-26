@@ -73,8 +73,7 @@ plugins=(git tmux emoji)
 
 # ssh
 # export SSH_KEY_PATH="~/.ssh/rsa_id"
-alias ssh-add='ssh-add -t 1h'
-
+alias ssh-add='ssh-add -t 1h' 
 # Hide user@hostname prefix
 DEFAULT_USER='tomsgu'
 # redefine prompt_context for hiding user@hostname

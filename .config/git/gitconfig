@@ -1,9 +1,10 @@
 [user]
 	name = Tomas
 	email = tomasjakll@gmail.com
+	signingkey = 4A9028CF4C8A22C5
 [core]
 	editor = vim
-	excludesfile = /home/tomsgu/.gitignore_global
+	excludesfile = ~/.gitignore_global
 	quotepath = false
 [alias]
 	st = status

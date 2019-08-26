@@ -95,7 +95,7 @@ bindsym $mod+Shift+w exec brave
 bindsym $mod+q kill
 
 # start dmenu launcher
-bindsym $mod+d exec --no-startup-id j4-dmenu-desktop
+bindsym $mod+d exec --no-startup-id dmenu_run
 
 #------------------------------------------------------------------------------
 # Input devices setup
@@ -107,9 +107,9 @@ input 1008:12362:Chicony_HP_Business_Slim_Keyboard xkb_numlock enabled
 # Displays setup
 #------------------------------------------------------------------------------
 # Change display settings according to
-output DP-1 resolution 1920x1080 position 0 0 
+output DP-1 resolution 1920x1080 position 0 0 transform 270
 output DP-1 background /home/tomsgu/Pictures/Wallpaper/elementaryos/Carmine\ De\ Fazio.jpg fill
-output HDMI-A-2 resolution 1680x1050 position 1920 0
+output HDMI-A-2 resolution 1680x1050 position 1080 530 
 output HDMI-A-2 background /home/tomsgu/Pictures/Wallpaper/elementaryos/Carmine\ De\ Fazio.jpg fill
 output eDP-1 disable
 output eDP-1 background /home/tomsgu/Pictures/Wallpaper/elementaryos/Carmine\ De\ Fazio.jpg fill
@@ -198,6 +198,22 @@ bindsym $mod+n mode $systemActions
 #------------------------------------------------------------------------------
 # Remove window titles completely
 #------------------------------------------------------------------------------
-new_window none
+default_border none
 bindsym $mod+Shift+x border none
 bindsym $mod+x border normal
+
+#------------------------------------------------------------------------------
+# Startup applications
+#------------------------------------------------------------------------------
+#exec --no-startup-id albert
+#exec --no-startup-id nm-applet
+#exec --no-startup-id blueman-applet
+#exec --no-startup-id keepassxc
+#exec --no-startup-id thunderbird
+
+# Execute all apps defined in ~/.config/autostart. 
+# dex app is required for this.
+# exec dex -a -s ~/.config/autostart/
+
+# Disable DPMS (Energy Star) - suspend standby
+#exec xset -dpms
