@@ -211,6 +211,7 @@ bindsym $mod+x border normal
 #------------------------------------------------------------------------------
 # Startup applications
 #------------------------------------------------------------------------------
+exec --no-startup-id redshift -l 50.08:14.44
 #exec --no-startup-id albert
 #exec --no-startup-id nm-applet
 #exec --no-startup-id blueman-applet
