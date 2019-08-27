@@ -141,6 +141,12 @@ bindsym Print exec 'grim /tmp/screenshot.png && shotwell /tmp/screenshot.png'
 #------------------------------------------------------------------------------
 # Change keyboard setup
 #------------------------------------------------------------------------------
+input 1:1:AT_Translated_Set_2_keyboard {
+    xkb_layout us,cz
+    xkb_variant ,qwerty
+    xkb_options grp:alt_shift_toggle
+}
+
 set $changeKeyboardMode "Set keyboard layout [e]nglish [c]zech"
 mode $changeKeyboardMode {
     bindsym e exec setxkbmap -layout us; mode "default"
