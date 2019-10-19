@@ -2,6 +2,7 @@
 " Plugins setup
 "------------------------------------------------------------------------------
 set nocompatible " Disable vi-compatibility.
+set encoding=UTF-8
 
 " Specify directory for plugins.
 call plug#begin('~/.vim/plugged')
@@ -12,6 +13,7 @@ Plug 'itchyny/lightline.vim'
 Plug 'scrooloose/syntastic'
 Plug 'shawncplus/phpcomplete.vim'
 Plug 'vimwiki/vimwiki'
+Plug 'ryanoasis/vim-devicons'
 "Plug 'ctrlp.vim'
 "Plug 'vim-airline/vim-airline'
 "Plug 'vim-airline/vim-airline-themes'
