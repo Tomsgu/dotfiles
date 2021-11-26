@@ -11,9 +11,24 @@ Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'altercation/vim-colors-solarized'
 Plug 'itchyny/lightline.vim'
 Plug 'scrooloose/syntastic'
-Plug 'shawncplus/phpcomplete.vim'
 Plug 'vimwiki/vimwiki'
+
+" Icons for NERDtree
 Plug 'ryanoasis/vim-devicons'
+
+" autocomplete (), [], {}, etc
+Plug 'jiangmiao/auto-pairs'
+
+" Php autocompletion on top of coc.
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
+
+" See git status of a current line
+Plug 'airblade/vim-gitgutter'
+
+" Suround selected text with any character.
+Plug 'tpope/vim-surround'
+
 "Plug 'ctrlp.vim'
 "Plug 'vim-airline/vim-airline'
 "Plug 'vim-airline/vim-airline-themes'
@@ -25,6 +40,12 @@ let g:ctrlp_match_window = 'bottom,order:ttb' " sort results from top to bottom
 set t_Co=256
 set guifont=menlo\ for\ powerline:h13
 set linespace=13
+
+
+
+"------------------------------------------------------------------------------
+" Setup spell checking for english
+set spell spelllang=en_us
 
 "------------------------------------------------------------------------------
 " Set solarized colorscheme
@@ -46,6 +67,9 @@ set ttimeoutlen=50
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 " 2. Open/close NERDTree by <ctrl-n> key.
 map <C-n> :NERDTreeToggle<CR>
+" Icons for NERDtree setup
+let g:webdevicons_enable_nerdtree = 1
+let g:webdevicons_conceal_nerdtree_brackets = 1
 
 "------------------------------------------------------------------------------
 " vimwiki setup
@@ -83,7 +107,6 @@ set autowrite                   "Save on buffer switch
 set mouse=a
 set noshowmode                  " Don't show the mode, lightline already shows mode info.
 set clipboard=unnamedplus           " Use a system clipboard.
-imap jj <Esc>
 map <C-l> mzgg=G`z
 
 " easier move screen up/down
@@ -98,3 +121,21 @@ highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE gui=NONE gui
 set wildmode=full
 set shiftwidth=4
 filetype plugin indent on
+
+" Ability to use clipboard under wayland
+
+xnoremap "+y y:call system("wl-copy", @")<cr>
+nnoremap "+p :let @"=substitute(system("wl-paste --no-newline"), '<C-v><C-m>', '', 'g')<cr>p
+nnoremap "*p :let @"=substitute(system("wl-paste --no-newline --primary"), '<C-v><C-m>', '', 'g')<cr>p
+
+" coc autocompletion with <TAB> key
+" use <tab> for trigger completion and navigate to the next complete item
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~ '\s'
+endfunction
+
+inoremap <silent><expr> <Tab>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<Tab>" :
+      \ coc#refresh()

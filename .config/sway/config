@@ -90,6 +90,10 @@ bindsym $mod+Shift+c reload
 # start a terminal
 bindsym $mod+Return exec alacritty
 bindsym $mod+Shift+w exec brave
+bindsym $mod+Shift+e exec alacritty -e amfora # gemini browser
+bindsym $mod+u exec alacritty -e lf # file manager
+bindsym $mod+i exec alacritty -e aerc  # email client
+bindsym $mod+o exec alacritty -e nvim ~/Documents/Work/TODO 
 
 # kill focused window
 bindsym $mod+q kill
@@ -101,28 +105,40 @@ bindsym $mod+d exec --no-startup-id dmenu_run
 # Input devices setup
 #------------------------------------------------------------------------------
 # Enable numlock in the home keyboard
-input 1008:12362:Chicony_HP_Business_Slim_Keyboard xkb_numlock enabled
+input "type:keyboard" {
+    xkb_options caps:escape_shifted_capslock
+}
+
+input "type:keyboard" {
+    xkb_numlock enabled
+}
 
 #------------------------------------------------------------------------------
 # Displays setup
 #------------------------------------------------------------------------------
 # Change display settings according to
-output DP-1 resolution 1920x1080 position 0 0 transform 270
-output DP-1 background /home/tomsgu/Pictures/Wallpaper/elementaryos/Carmine\ De\ Fazio.jpg fill
-output HDMI-A-2 resolution 1680x1050 position 1080 530 
-output HDMI-A-2 background /home/tomsgu/Pictures/Wallpaper/elementaryos/Carmine\ De\ Fazio.jpg fill
-output eDP-1 disable
-output eDP-1 background /home/tomsgu/Pictures/Wallpaper/elementaryos/Carmine\ De\ Fazio.jpg fill
 
-set $displayMode "Set display mode [l]aptop [h]ome"
+# This is for transforming main monitor to portrait mode
+#output DP-2 resolution 1920x1080 position 0 0 transform 270
+#output HDMI-A-2 resolution 1680x1050 position 1080 530 
+
+output HDMI-A-2 resolution 2560x1440@144Hz position 1920 0 
+output HDMI-A-2 background /home/tomsgu/Pictures/Wallpaper/elementaryos/Carmine\ De\ Fazio.jpg fill
+output DP-2 resolution 1920x1080 position 0 0 
+output DP-2 background /home/tomsgu/Pictures/Wallpaper/elementaryos/Carmine\ De\ Fazio.jpg fill
+
+workspace 1 output HDMI-A-2
+workspace 2 output HDMI-A-2
+workspace 3 output HDMI-A-2
+
+set $displayMode "Set display mode [l]andscape [p]ortrait"
 bindsym $mod+m mode $displayMode
 mode $displayMode {
-    bindsym l exec 'swaymsg output eDP-1 enable && \
-                    swaymsg output eDP-1 resolution 2560x1440 position 0 0 scale 2\
+    bindsym l exec 'swaymsg output HDMI-A-2 resolution 2560x1440@144Hz position 1920 0 && \
+                    swaymsg output DP-2 resolution 1920x1080 position 0 0 transform 0 \
                     '; mode "default"
-    bindsym h exec 'swaymsg output eDP-1 disable && \
-                    swaymsg output DP-1 resolution 1920x1080 position 0 0 && \
-                    swaymsg output HDMI-A-2 resolution 1680x1050 position 1920,0 \
+    bindsym p exec 'swaymsg output HDMI-A-2 resolution 2560x1440@144Hz position 1080 0 && \
+                    swaymsg output DP-2 resolution 1920x1080 position 0 0 transform 270 \
                     '; mode "default"
 
     # back to normal: Enter or Escape
@@ -141,7 +157,7 @@ bindsym Print exec 'grim /tmp/screenshot.png && shotwell /tmp/screenshot.png'
 #------------------------------------------------------------------------------
 # Change keyboard setup
 #------------------------------------------------------------------------------
-input 1:1:AT_Translated_Set_2_keyboard {
+input "type:keyboard" {
     xkb_layout us,cz
     xkb_variant ,qwerty
     xkb_options grp:alt_shift_toggle
@@ -154,12 +170,12 @@ mode $changeKeyboardMode {
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
-bindsym $mod+o mode $changeKeyboardMode
+bindsym $mod+p mode $changeKeyboardMode
 
 #------------------------------------------------------------------------------
 # Fonts setup
 #------------------------------------------------------------------------------
-font pango: Roboto light 10 # DejaVu Sans Mono 8
+font pango: Noto Sans Regular 11 #Roboto light 10 # DejaVu Sans Mono 8
 
 #------------------------------------------------------------------------------
 # Resize mod
@@ -209,14 +225,37 @@ bindsym $mod+Shift+x border none
 bindsym $mod+x border normal
 
 #------------------------------------------------------------------------------
+# Mouse setup
+#------------------------------------------------------------------------------
+input 2522:31237:COMPANY__USB_Device {
+    dwt enabled
+    pointer_accel -1
+}
+
+#------------------------------------------------------------------------------
+# Change cursor theme
+#------------------------------------------------------------------------------
+seat seat0 xcursor_theme elementary 13
+
+#------------------------------------------------------------------------------
+# Setup gtk themes
+#------------------------------------------------------------------------------
+#set $gnome-schema org.gnome.desktop.interface
+#exec_always {
+#    gsettings set $gnome-schema gtk-theme ''
+#    gsettings set $gnome-schema icon-theme 
+#}
+
+#------------------------------------------------------------------------------
 # Startup applications
 #------------------------------------------------------------------------------
-exec --no-startup-id redshift -l 50.08:14.44
+#exec --no-startup-id redshift -l 50.08:14.44
 #exec --no-startup-id albert
 #exec --no-startup-id nm-applet
 #exec --no-startup-id blueman-applet
 #exec --no-startup-id keepassxc
 #exec --no-startup-id thunderbird
+exec systemctl --user import-environment
 
 # Execute all apps defined in ~/.config/autostart. 
 # dex app is required for this.

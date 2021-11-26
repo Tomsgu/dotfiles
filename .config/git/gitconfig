@@ -13,4 +13,10 @@
 	br = branch
 	ll = log --oneline --graph --all --decorate
 [credential]
-	helper = cache
+	helper = /usr/bin/pass-git-helper
+[push]
+	followTags = true
+[init]
+	defaultBranch = master
+[pull]
+	rebase = false

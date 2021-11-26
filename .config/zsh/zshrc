@@ -51,7 +51,7 @@ DISABLE_AUTO_UPDATE="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git tmux emoji)
+plugins=(git emoji)
 
 
 # User configuration
@@ -73,7 +73,7 @@ plugins=(git tmux emoji)
 
 # ssh
 # export SSH_KEY_PATH="~/.ssh/rsa_id"
-alias ssh-add='ssh-add -t 1h' 
+alias ssh-add='ssh-add -t 3h' 
 # Hide user@hostname prefix
 DEFAULT_USER='tomsgu'
 # redefine prompt_context for hiding user@hostname
@@ -87,9 +87,14 @@ prompt_context () { }
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+alias vim="nvim"
+
+#alias php="/usr/bin/php7"
 
 # Cargo aliases
 alias cargo='cargo --color always'
+
+
 
 ZSH_CACHE_DIR=$HOME/.cache/oh-my-zsh
 if [[ ! -d $ZSH_CACHE_DIR ]]; then
@@ -101,3 +106,15 @@ unset zle_bracketed_paste
 export ATHAME_SHOW_MODE=0
 export GOPATH=~/go
 export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$HOME/.symfony/bin:$PATH"
+export PATH="$HOME/.yarn/bin:$PATH"
+export PATH="$HOME/.config/composer/vendor/bin:$PATH"
+export PATH="$HOME/go/bin:$PATH"
+
+# Replacement for ls https://the.exa.website
+alias ls='exa --icons --time-style=long-iso --sort=type'
+alias ll='exa -lag --icons --time-style=long-iso --sort=type --extended'
+alias ls='exa --icons --time-style=long-iso --sort=type'
+alias ll='exa -lag --icons --time-style=long-iso --sort=type --extended'
+alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+

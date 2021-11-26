@@ -1,1 +1,1 @@
-.config/zsh/zshrc
+/home/tomsgu/.config/zsh/zshrc

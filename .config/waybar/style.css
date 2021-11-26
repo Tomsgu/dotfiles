@@ -8,13 +8,17 @@
     transition-duration: 0s;
 }
 
+.text-red {
+    color:      rgba(220, 19, 19, 1);
+}
+
 window {
     color:      rgba(217, 216, 216, 1);
-    background: rgba(35, 31, 32, 0.00);
+    background: rgba(35, 31, 32, 1);
 }
 
 window#waybar {
-    background: rgba(35, 31, 32, 0.85);
+    background: rgba(35, 31, 32, 1);
 }
 
 #workspaces {
@@ -39,7 +43,7 @@ window#waybar {
     color:      rgba(238, 46, 36, 1);
 }
 
-#mode, #battery, #cpu, #memory, #network, #pulseaudio, #idle_inhibitor, #backlight, #custom-storage, #custom-spotify, #custom-weather, #custom-mail {
+#disk, #mode, #battery, #cpu, #memory, #network, #pulseaudio, #idle_inhibitor, #backlight, #custom-storage, #custom-spotify, #custom-weather, #custom-mail, #custom-mail-status, #temperature, #custom-todo {
     margin:     0px 6px 0px 10px;
     min-width:  25px;
 }

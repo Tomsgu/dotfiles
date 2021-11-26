@@ -4,42 +4,61 @@
     "height": 30,
     "modules-left": ["sway/workspaces", "sway/mode"],
     "modules-center": ["sway/window"],
-    "modules-right": ["custom/spotify", "pulseaudio", "network", "idle_inhibitor", "battery", "clock", "tray"],
+    "modules-right": ["custom/mail-status", "custom/todo", "custom/spotify", "disk", "temperature", "cpu", "pulseaudio", "clock", "tray"],
     "sway/mode": {
         "format": " {}"
     },
     "custom/spotify": {
-        "interval": 1,
+        "interval": 5,
         "return-type": "json",
         "exec": "~/.config/waybar/modules/spotify.sh",
         "exec-if": "pgrep spotify",
+        "escape": true
+    },
+    "custom/mail-status": {
+        "interval": 30,
+        "return-type": "json",
+        "exec": "~/.config/waybar/modules/mail-status.sh",
+        "on-click": "alacritty -e aerc",
+        "escape": true
+    },
+    "custom/todo": {
+        "interval": 30,
+        "return-type": "json",
+        "exec": "~/.config/waybar/modules/todo.sh",
+        "on-click": "alacritty -e nvim ~/Documents/Work/TODO",
         "escape": true
     },
     "sway/workspaces": {
         "format": "{name}",
         "disable-scroll": true
     },
+    "disk": {
+        "interval": 30,
+        "format": "  {percentage_free}%",
+        "path": "/",
+        "escape": true,
+        "tooltip": false
+    },
     "sway/window": {
         "max-length": 80,
         "tooltip": false
     },
     "clock": {
-        "format": "{:%a %d.%m %H:%M}",
+        "format": "  {:%a %d.%m %H:%M}",
         "tooltip": false
     },
-    "battery": {
-        "format": "{icon}",
-        "format-icons": ["", "", "", "", ""],
-        "format-charging": "{capacity}% ",
-        "interval": 30,
-        "states": {
-            "warning": 25,
-            "critical": 10
-        },
-        "tooltip": false
+    "cpu": {
+        "interval": 10,
+        "format": " {}%",
+        "escape": true
+    },
+    "temperature": {
+        "format": " {temperatureC}°C"
     },
     "network": {
-        "format": "{icon}",
+        "interval": 5,
+        "format": " {bandwidthDownBits}  {bandwidthUpBits}",
         "format-alt": "{ipaddr}/{cidr} {icon}",
         "format-alt-click": "click-right",
         "format-icons": {
@@ -48,10 +67,10 @@
             "disconnected": [""]
         },
         "on-click": "alacritty -e nmtui",
-    "tooltip": false
+        "tooltip": false
     },
     "pulseaudio": {
-        "format": "{icon}",
+        "format": "{icon} {volume}",
         "format-alt": "{volume} {icon}",
         "format-alt-click": "click-right",
         "format-muted": "",
