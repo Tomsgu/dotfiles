@@ -4,7 +4,7 @@
     "height": 30,
     "modules-left": ["sway/workspaces", "sway/mode"],
     "modules-center": ["sway/window"],
-    "modules-right": ["custom/mail-status", "custom/todo", "custom/spotify", "disk", "temperature", "cpu", "pulseaudio", "clock", "tray"],
+    "modules-right": ["custom/mail-status", "custom/todo", "custom/spotify", "disk", "temperature", "cpu", "pulseaudio", "clock#LA", "clock#cz", "tray"],
     "sway/mode": {
         "format": " {}"
     },
@@ -16,7 +16,7 @@
         "escape": true
     },
     "custom/mail-status": {
-        "interval": 30,
+        "interval": 5,
         "return-type": "json",
         "exec": "~/.config/waybar/modules/mail-status.sh",
         "on-click": "alacritty -e aerc",
@@ -44,9 +44,14 @@
         "max-length": 80,
         "tooltip": false
     },
-    "clock": {
+    "clock#cz": {
         "format": "  {:%a %d.%m %H:%M}",
         "tooltip": false
+    },
+    "clock#LA": {
+        "format": "  {:%H:%M}",
+        "tooltip": false,
+        "timezone": "America/Los_Angeles"
     },
     "cpu": {
         "interval": 10,
