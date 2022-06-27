@@ -1,1 +1,0 @@
-/home/tomsgu/.config/zsh/zshrc

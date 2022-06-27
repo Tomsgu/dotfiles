@@ -1,11 +1,15 @@
 "------------------------------------------------------------------------------
-" Plugins setup
+" General config
 "------------------------------------------------------------------------------
 set nocompatible " Disable vi-compatibility.
 set encoding=UTF-8
+set guicursor=
 
+"------------------------------------------------------------------------------
+" Plugins setup
+"------------------------------------------------------------------------------
 " Specify directory for plugins.
-call plug#begin('~/.vim/plugged')
+call plug#begin()
 Plug 'scrooloose/nerdtree'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'altercation/vim-colors-solarized'
@@ -20,18 +24,18 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'jiangmiao/auto-pairs'
 
 " Php autocompletion on top of coc.
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
+"Plug 'neoclide/coc.nvim', {'branch': 'release'}
+"Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
 
 " See git status of a current line
 Plug 'airblade/vim-gitgutter'
 
-" Suround selected text with any character.
+" Surround selected text with any character.
 Plug 'tpope/vim-surround'
 
+" Plug 'faith/vim-go'
+
 "Plug 'ctrlp.vim'
-"Plug 'vim-airline/vim-airline'
-"Plug 'vim-airline/vim-airline-themes'
 call plug#end()
 
 "------------------------------------------------------------------------------
@@ -40,8 +44,6 @@ let g:ctrlp_match_window = 'bottom,order:ttb' " sort results from top to bottom
 set t_Co=256
 set guifont=menlo\ for\ powerline:h13
 set linespace=13
-
-
 
 "------------------------------------------------------------------------------
 " Setup spell checking for english
@@ -53,13 +55,6 @@ let g:solarized_termtrans = 1
 let g:solarized_termcolors=256
 set background=dark
 colorscheme solarized
-
-"------------------------------------------------------------------------------
-" Airline plugin setup
-let g:airline_powerline_fonts = 1
-let g:lightline = { 'colorscheme': 'solarized', }
-set laststatus=2                              " Without this it cannot be shown.
-set ttimeoutlen=50
 
 "------------------------------------------------------------------------------
 " NERDtree setup

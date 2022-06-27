@@ -3,8 +3,8 @@
 	email = tomasjakll@gmail.com
 	signingkey = 4A9028CF4C8A22C5
 [core]
-	editor = vim
-	excludesfile = ~/.gitignore_global
+	editor = nvim
+	excludesfile = ~/.config/git/ignore
 	quotepath = false
 [alias]
 	st = status

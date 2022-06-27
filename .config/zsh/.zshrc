@@ -116,5 +116,6 @@ alias ls='exa --icons --time-style=long-iso --sort=type'
 alias ll='exa -lag --icons --time-style=long-iso --sort=type --extended'
 alias ls='exa --icons --time-style=long-iso --sort=type'
 alias ll='exa -lag --icons --time-style=long-iso --sort=type --extended'
+alias cat='bat'
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
-
+alias whatsapp-for-linux='WEBKIT_DISABLE_COMPOSITING_MODE=1 whatsapp-for-linux'
