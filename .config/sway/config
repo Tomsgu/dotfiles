@@ -8,6 +8,13 @@ set $down j
 set $up k
 set $right l
 
+# Preferred terminal emulator
+set $term alacritty
+
+# Preferred launcher 
+set $menu rofi -show drun 
+#set $menu dmenu_run
+
 # change focus
 bindsym $mod+$left focus left
 bindsym $mod+$down focus down
@@ -89,7 +96,7 @@ bindsym $mod+Shift+c reload
 #------------------------------------------------------------------------------
 # start a terminal
 bindsym $mod+Return exec alacritty
-bindsym $mod+Shift+w exec brave
+bindsym $mod+Shift+w exec firefox # brave
 bindsym $mod+Shift+e exec alacritty -e amfora # gemini browser
 bindsym $mod+u exec alacritty -e lf # file manager
 bindsym $mod+i exec alacritty -e aerc  # email client
@@ -99,7 +106,10 @@ bindsym $mod+o exec alacritty -e nvim ~/Documents/Work/TODO
 bindsym $mod+q kill
 
 # start dmenu launcher
-bindsym $mod+d exec --no-startup-id dmenu_run
+# bindsym $mod+d exec --no-startup-id dmenu_run
+
+# start preffered launcher
+bindsym $mod+d exec --no-startup-id rofi -show drun
 
 #------------------------------------------------------------------------------
 # Input devices setup
@@ -119,13 +129,11 @@ input "type:keyboard" {
 # Change display settings according to
 
 # This is for transforming main monitor to portrait mode
-#output DP-2 resolution 1920x1080 position 0 0 transform 270
-#output HDMI-A-2 resolution 1680x1050 position 1080 530 
-
-output HDMI-A-2 resolution 2560x1440@144Hz position 1920 0 
-output HDMI-A-2 background /home/tomsgu/Pictures/Wallpaper/elementaryos/Carmine\ De\ Fazio.jpg fill
-output DP-2 resolution 1920x1080 position 0 0 
-output DP-2 background /home/tomsgu/Pictures/Wallpaper/elementaryos/Carmine\ De\ Fazio.jpg fill
+output HDMI-A-2 resolution 2560x1440@144Hz position 1080 100
+output HDMI-A-2 background /usr/share/backgrounds/gnome/brush-strokes-d.jpg fill
+output DP-2 resolution 1920x1080 position 0 0 transform 270 
+output DP-2 background /usr/share/backgrounds/gnome/brush-strokes-d.jpg fill
+focus output HDMI-A-2
 
 workspace 1 output HDMI-A-2
 workspace 2 output HDMI-A-2
@@ -145,6 +153,8 @@ mode $displayMode {
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
+# Adding gaps
+gaps inner 10
 
 #------------------------------------------------------------------------------
 # Print screen
@@ -256,6 +266,7 @@ seat seat0 xcursor_theme elementary 13
 #exec --no-startup-id keepassxc
 #exec --no-startup-id thunderbird
 exec systemctl --user import-environment
+exec xrandr --output XWAYLAND0 --primary
 
 # Execute all apps defined in ~/.config/autostart. 
 # dex app is required for this.
