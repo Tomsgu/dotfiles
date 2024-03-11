@@ -6,6 +6,7 @@
 	editor = nvim
 	excludesfile = ~/.config/git/ignore
 	quotepath = false
+	commentChar = >
 [alias]
 	st = status
 	ci = commit
@@ -16,6 +17,7 @@
 	helper = /usr/bin/pass-git-helper
 [push]
 	followTags = true
+	default = simple
 [init]
 	defaultBranch = master
 [pull]
