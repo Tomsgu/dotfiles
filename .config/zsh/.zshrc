@@ -110,6 +110,7 @@ export PATH="$HOME/.symfony/bin:$PATH"
 export PATH="$HOME/.yarn/bin:$PATH"
 export PATH="$HOME/.config/composer/vendor/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
+export PATH="$HOME/.local/share/cargo/bin:$PATH"
 
 # Replacement for ls https://the.exa.website
 alias ls='exa --icons --time-style=long-iso --sort=type'
