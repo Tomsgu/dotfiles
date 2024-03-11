@@ -49,7 +49,7 @@
         "tooltip": false
     },
     "clock#LA": {
-        "format": "  {:%H:%M}",
+        "format": "  {:%H:%M:%S}",
         "tooltip": false,
         "timezone": "America/Los_Angeles"
     },

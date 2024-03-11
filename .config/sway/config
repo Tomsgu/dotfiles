@@ -100,7 +100,7 @@ bindsym $mod+Shift+w exec firefox # brave
 bindsym $mod+Shift+e exec alacritty -e amfora # gemini browser
 bindsym $mod+u exec alacritty -e lf # file manager
 bindsym $mod+i exec alacritty -e aerc  # email client
-bindsym $mod+o exec alacritty -e nvim ~/Documents/Work/TODO 
+bindsym $mod+o exec alacritty -e nvim ~/Documents/Work/TODO/
 
 # kill focused window
 bindsym $mod+q kill
@@ -129,24 +129,25 @@ input "type:keyboard" {
 # Change display settings according to
 
 # This is for transforming main monitor to portrait mode
-output HDMI-A-2 resolution 2560x1440@144Hz position 1080 100
-output HDMI-A-2 background /usr/share/backgrounds/gnome/brush-strokes-d.jpg fill
-output DP-2 resolution 1920x1080 position 0 0 transform 270 
-output DP-2 background /usr/share/backgrounds/gnome/brush-strokes-d.jpg fill
-focus output HDMI-A-2
+output HDMI-A-1 resolution 2560x1440@144Hz position 0 0
+#output HDMI-A-1 resolution 2560x1440@144Hz position 1080 100
+#output HDMI-A-2 background /usr/share/backgrounds/gnome/wood.webp fill
+#output DP-3 resolution 1920x1080 position 0 0 transform 270 
+#output DP-2 background /usr/share/backgrounds/gnome/wood.webp fill
+focus output HDMI-A-1
 
-workspace 1 output HDMI-A-2
-workspace 2 output HDMI-A-2
-workspace 3 output HDMI-A-2
+workspace 1 output HDMI-A-1
+workspace 2 output HDMI-A-1
+workspace 3 output HDMI-A-1
 
 set $displayMode "Set display mode [l]andscape [p]ortrait"
 bindsym $mod+m mode $displayMode
 mode $displayMode {
-    bindsym l exec 'swaymsg output HDMI-A-2 resolution 2560x1440@144Hz position 1920 0 && \
-                    swaymsg output DP-2 resolution 1920x1080 position 0 0 transform 0 \
+    bindsym l exec 'swaymsg output HDMI-A-1 resolution 2560x1440@144Hz position 1920 0 && \
+                    swaymsg output DP-3 resolution 1920x1080 position 0 0 transform 0 \
                     '; mode "default"
-    bindsym p exec 'swaymsg output HDMI-A-2 resolution 2560x1440@144Hz position 1080 0 && \
-                    swaymsg output DP-2 resolution 1920x1080 position 0 0 transform 270 \
+    bindsym p exec 'swaymsg output HDMI-A-1 resolution 2560x1440@144Hz position 1080 0 && \
+                    swaymsg output DP-3 resolution 1920x1080 position 0 0 transform 270 \
                     '; mode "default"
 
     # back to normal: Enter or Escape
@@ -160,7 +161,7 @@ gaps inner 10
 # Print screen
 #------------------------------------------------------------------------------
 # Take a screen shot from all monitors and display it in shotwell.
-bindsym Print exec 'grim /tmp/screenshot.png && shotwell /tmp/screenshot.png'
+bindsym Print exec 'grim /tmp/screenshot.png && pinta /tmp/screenshot.png'
 # TODO: Take screen shot from the focused monitor - doesn't work
 # bindsym Mod1+Print exec grim -o '$(swaymsg -t get_outputs | jq -r \'.[] | select(.focused) | .name\') /tmp/screenshot.png' # && shotwell /tmp/screenshot.png
 
@@ -256,6 +257,13 @@ seat seat0 xcursor_theme elementary 13
 #    gsettings set $gnome-schema icon-theme 
 #}
 
+
+#------------------------------------------------------------------------------
+# Applications behaviour
+#------------------------------------------------------------------------------
+for_window [app_id="org.gnome.Calculator"] floating enable
+for_window [app_id="wayfarer"] floating enable
+
 #------------------------------------------------------------------------------
 # Startup applications
 #------------------------------------------------------------------------------
@@ -266,7 +274,7 @@ seat seat0 xcursor_theme elementary 13
 #exec --no-startup-id keepassxc
 #exec --no-startup-id thunderbird
 exec systemctl --user import-environment
-exec xrandr --output XWAYLAND0 --primary
+#exec xrandr --output XWAYLAND0 --primary
 
 # Execute all apps defined in ~/.config/autostart. 
 # dex app is required for this.
