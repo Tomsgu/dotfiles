@@ -1,0 +1,27 @@
+{
+    "workspace.library": [
+        "/home/tomsgu/.config/nvim",
+        "/etc/xdg/nvim",
+        "/home/tomsgu/.local/share/nvim/site",
+        "/home/tomsgu/.local/share/nvim/site/pack/packer/start/LuaSnip",
+        "/home/tomsgu/.local/share/nvim/site/pack/packer/start/cmp-nvim-lsp",
+        "/home/tomsgu/.local/share/nvim/site/pack/packer/start/lsp-zero.nvim",
+        "/home/tomsgu/.local/share/nvim/site/pack/packer/start/mason-lspconfig.nvim",
+        "/home/tomsgu/.local/share/nvim/site/pack/packer/start/mason.nvim",
+        "/home/tomsgu/.local/share/nvim/site/pack/packer/start/nvim-cmp",
+        "/home/tomsgu/.local/share/nvim/site/pack/packer/start/nvim-lspconfig",
+        "/home/tomsgu/.local/share/nvim/site/pack/packer/start/nvim-treesitter",
+        "/home/tomsgu/.local/share/nvim/site/pack/packer/start/packer.nvim",
+        "/home/tomsgu/.local/share/nvim/site/pack/packer/start/plenary.nvim",
+        "/home/tomsgu/.local/share/nvim/site/pack/packer/start/rose-pine",
+        "/home/tomsgu/.local/share/nvim/site/pack/packer/start/telescope.nvim",
+        "/usr/share/nvim/runtime",
+        "/usr/share/nvim/runtime/pack/dist/opt/matchit",
+        "/usr/lib/nvim",
+        "/home/tomsgu/.local/share/nvim/site/pack/packer/start/cmp-nvim-lsp/after",
+        "/home/tomsgu/.config/nvim/after",
+        "/usr/share/vim/vimfiles",
+        "${3rd}/luassert/library",
+        "${3rd}/luv/library"
+    ]
+}

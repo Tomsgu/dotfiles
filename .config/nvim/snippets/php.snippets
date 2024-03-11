@@ -1,0 +1,25 @@
+snippet php
+	<?php
+
+	declare(strict_types = 1);
+
+	namespace ${1:App\Action}
+
+	class ${2:`vim_snippets#Filename()`}
+	{
+		${0:${VISUAL}}
+	}
+snippet pf
+	public function ${1}(${3}):${4}
+	{
+		${0:${VISUAL}}
+	}
+snippet fore "foreach ($var as $value) { .. }"
+	foreach ($${1:variable} as $${2:value}) {
+		${0:${VISUAL}}
+	}
+snippet try "try { ... } catch (Exception $e) { ... }"
+	try {
+		${0:${VISUAL}}
+	} catch (${1:Exception} $e) {
+	}

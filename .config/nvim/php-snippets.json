@@ -1,0 +1,14 @@
+{
+    "Class": ["php"],
+    "body": [
+        "<?php",
+        "",
+        "declare(strict_types=1);",
+        "",
+        "namespace App\Action\Public;",
+        "",
+        "class $TM_FILENAME_BASE",
+        "{",
+        "}"
+    ]
+}
