@@ -1,5 +1,0 @@
-require("tomsgu.remap")
-require("tomsgu.lazy")
-require("tomsgu.set")
-require("tomsgu.netrw")
-require("autoclose").setup()
