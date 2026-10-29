@@ -1,0 +1,248 @@
+import Quickshell
+import Quickshell.Io
+import QtQuick
+
+BarItem {
+    id: root
+    property real latitude: {{ .latitude }}
+    property real longitude: {{ .longitude }}
+    property string place: {{ .place | quote }}
+
+    property var data: null
+    property date updatedAt: new Date()
+    readonly property var current: data ? data.current : null
+
+    readonly property var hours: {
+        if (!data) return []
+        const h = data.hourly
+        const now = Date.now() - 3600 * 1000
+        const rows = []
+        for (let i = 0; i < h.time.length && rows.length < 8; i++) {
+            if (Date.parse(h.time[i]) < now) continue
+            rows.push({ time: h.time[i].slice(11), temp: Math.round(h.temperature_2m[i]), code: h.weather_code[i], day: h.is_day[i] === 1 })
+        }
+        return rows
+    }
+
+    readonly property var days: {
+        if (!data) return []
+        const d = data.daily
+        return d.time.map((t, i) => ({
+            label: i === 0 ? "YESTERDAY" : i === 1 ? "TODAY" : Qt.formatDate(new Date(Date.parse(t)), "ddd").toUpperCase(),
+            name: Qt.formatDate(new Date(Date.parse(t)), "dddd"),
+            hi: Math.round(d.temperature_2m_max[i]),
+            lo: Math.round(d.temperature_2m_min[i]),
+            rain: d.precipitation_probability_max[i] === null ? -1 : d.precipitation_probability_max[i],
+            code: d.weather_code[i]
+        }))
+    }
+
+    function icon(code, day) {
+        if (code === 0) return day ? "󰖙" : "󰖔"
+        if (code <= 2) return day ? "󰖕" : "󰼱"
+        if (code === 3) return "󰖐"
+        if (code <= 48) return "󰖑"
+        if (code === 65 || code === 82) return "󰖖"
+        if (code <= 67 || (code >= 80 && code <= 82)) return "󰖗"
+        if (code <= 77 || code === 85 || code === 86) return "󰖘"
+        return "󰖓"
+    }
+
+    function fetchWeather() {
+        fetch.running = true
+    }
+
+    active: popup.visible
+
+    Process {
+        id: fetch
+        running: true
+        command: ["curl", "-sf", "--max-time", "15",
+            `https://api.open-meteo.com/v1/forecast?latitude=${root.latitude}&longitude=${root.longitude}` +
+            "&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code,is_day" +
+            "&hourly=temperature_2m,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max" +
+            "&timezone=auto&forecast_days=7&past_days=1"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try { root.data = JSON.parse(text); root.updatedAt = new Date() } catch (e) {}
+            }
+        }
+    }
+
+    Timer {
+        interval: 15 * 60 * 1000
+        running: true
+        repeat: true
+        onTriggered: root.fetchWeather()
+    }
+
+    IpcHandler {
+        target: "weather"
+        function toggle(): void { popup.toggle() }
+        function refresh(): void { root.fetchWeather() }
+    }
+
+    Row {
+        spacing: 6
+        BarText {
+            text: root.current ? root.icon(root.current.weather_code, root.current.is_day === 1) : "󰖐"
+            color: root.current ? Theme.fg : Theme.muted
+            font.pixelSize: Theme.barFontSize
+            width: 16
+            horizontalAlignment: Text.AlignHCenter
+        }
+        BarText {
+            text: root.current ? Math.round(root.current.temperature_2m) + "°" : "--"
+            font.pixelSize: Theme.barFontSize
+        }
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: popup.toggle()
+    }
+
+    component Stat: Column {
+        property string label
+        property string value
+        spacing: 4
+        SectionLabel { text: label }
+        BarText { text: value }
+    }
+
+    component Icon: BarText {
+        property int code
+        property bool day: true
+        text: root.icon(code, day)
+        width: 20
+        horizontalAlignment: Text.AlignHCenter
+        font.pixelSize: 15
+        color: Theme.fg
+    }
+
+    BarPopup {
+        id: popup
+        anchorItem: root
+        cardWidth: 440
+
+        Item {
+            width: parent.width
+            height: 64
+            visible: root.current !== null
+
+            Row {
+                spacing: 14
+                anchors.verticalCenter: parent.verticalCenter
+                BarText {
+                    text: root.current ? root.icon(root.current.weather_code, root.current.is_day === 1) : ""
+                    font.pixelSize: 40
+                    color: Theme.accent
+                    width: 52
+                    horizontalAlignment: Text.AlignHCenter
+                }
+                Row {
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 2
+                    BarText { text: root.current ? Math.round(root.current.temperature_2m) : ""; font.pixelSize: 38; font.bold: true }
+                    BarText { text: "°C"; color: Theme.muted; anchors.top: parent.top; anchors.topMargin: 6 }
+                }
+            }
+
+            Column {
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 8
+                SectionLabel { text: "󰍎 " + root.place.toUpperCase() }
+                Row {
+                    spacing: 18
+                    Stat { label: "FEELS"; value: root.current ? Math.round(root.current.apparent_temperature) + "°C" : "" }
+                    Stat { label: "WIND"; value: root.current ? Math.round(root.current.wind_speed_10m) + " km/h" : "" }
+                    Stat { label: "HUMID"; value: root.current ? root.current.relative_humidity_2m + "%" : "" }
+                }
+            }
+        }
+
+        BarText { visible: root.current === null; text: "Loading weather…"; color: Theme.muted }
+
+        Divider { visible: root.days.length > 1 }
+        SectionLabel { visible: root.days.length > 1; text: "TODAY" }
+
+        Item {
+            visible: root.days.length > 1
+            width: parent.width
+            height: 34
+            Row {
+                spacing: 12
+                anchors.verticalCenter: parent.verticalCenter
+                Icon { code: root.days.length > 1 ? root.days[1].code : 0; font.pixelSize: 22; width: 28 }
+                Column {
+                    spacing: 2
+                    BarText { text: root.days.length > 1 ? root.days[1].name : "" }
+                    BarText { text: root.days.length > 1 ? `${root.days[1].hi}° / ${root.days[1].lo}°` : ""; color: Theme.muted; font.pixelSize: 11 }
+                }
+            }
+            BarText {
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                text: root.days.length > 1 && root.days[1].rain >= 0 ? root.days[1].rain + "% rain" : ""
+                color: Theme.muted
+                font.pixelSize: 11
+            }
+        }
+
+        Row {
+            visible: root.hours.length > 0
+            width: parent.width
+            Repeater {
+                model: root.hours
+                Column {
+                    required property var modelData
+                    width: parent.width / 8
+                    spacing: 4
+                    BarText { anchors.horizontalCenter: parent.horizontalCenter; text: parent.modelData.time; color: Theme.muted; font.pixelSize: 10 }
+                    Icon { anchors.horizontalCenter: parent.horizontalCenter; code: parent.modelData.code; day: parent.modelData.day; font.pixelSize: 13 }
+                    BarText { anchors.horizontalCenter: parent.horizontalCenter; text: parent.modelData.temp + "°"; font.pixelSize: 11 }
+                }
+            }
+        }
+
+        Divider { visible: root.days.length > 0 }
+
+        Repeater {
+            model: root.days
+            Item {
+                required property var modelData
+                width: parent.width
+                height: 30
+                BarText { anchors.verticalCenter: parent.verticalCenter; text: parent.modelData.label; font.bold: true; font.pixelSize: 11 }
+                BarText {
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: 110
+                    text: parent.modelData.rain >= 0 && parent.modelData.label !== "YESTERDAY" ? parent.modelData.rain + "% rain" : ""
+                    color: Theme.muted
+                    font.pixelSize: 11
+                }
+                Icon { anchors.verticalCenter: parent.verticalCenter; x: 200; code: parent.modelData.code }
+                BarText {
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: `${parent.modelData.hi}° / ${parent.modelData.lo}°`
+                }
+            }
+        }
+
+        Divider {}
+
+        Item {
+            width: parent.width
+            height: 16
+            BarText { text: "󰔛 Updated " + Qt.formatTime(root.updatedAt, "HH:mm"); color: Theme.muted; font.pixelSize: 11 }
+            BarText {
+                anchors.right: parent.right
+                text: "󰑐"
+                color: refreshArea.containsMouse ? Theme.fg : Theme.muted
+                MouseArea { id: refreshArea; anchors.fill: parent; hoverEnabled: true; onClicked: root.fetchWeather() }
+            }
+        }
+    }
+}

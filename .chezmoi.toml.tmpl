@@ -5,6 +5,7 @@
 {{- $longitude := promptStringOnce . "longitude" "Home longitude (decimal)" -}}
 {{- $place := promptStringOnce . "place" "Weather place name" -}}
 {{- $host := promptStringOnce . "host" "Host role (desktop or laptop)" -}}
+{{- $mailDefault := promptStringOnce . "mailDefault" "Default mail account label" -}}
 {{- $mail := list -}}
 {{- if hasKey . "mail" }}{{ $mail = .mail }}{{ end -}}
 
@@ -16,6 +17,7 @@
     longitude = {{ $longitude | quote }}
     place = {{ $place | quote }}
     host = {{ $host | quote }}
+    mailDefault = {{ $mailDefault | quote }}
     # Mail accounts for the Quickshell mail widget: label shown in the bar,
     # dir under ~/Mail, trash folder name. Edit this file to add accounts.
     mail = [

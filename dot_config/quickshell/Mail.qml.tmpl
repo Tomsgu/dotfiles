@@ -1,0 +1,316 @@
+import Quickshell
+import Quickshell.Io
+import QtQuick
+
+BarItem {
+    id: root
+    readonly property var accounts: [{{ range $i, $m := .mail }}{{ if $i }}, {{ end }}{{ $m.label | quote }}{{ end }}]
+    readonly property string helper: Quickshell.env("HOME") + "/.local/bin/qs-mail"
+
+    property var counts: ({})
+    property string selected: {{ .mailDefault | quote }}
+    property var messages: []
+    property string filter: ""
+    property bool searching: false
+
+    readonly property int totalUnread: accounts.reduce((sum, a) => sum + (counts[a] || 0), 0)
+    readonly property var visibleMessages: {
+        const needle = filter.toLowerCase()
+        return needle === "" ? messages : messages.filter(m => (m.from + " " + m.subject + " " + m.addr).toLowerCase().includes(needle))
+    }
+
+    function initials(name) {
+        const parts = name.replace(/[^\p{L}\p{N} ]/gu, " ").trim().split(/\s+/)
+        const text = parts.length > 1 ? parts[0][0] + parts[1][0] : name.slice(0, 2)
+        return text.toUpperCase()
+    }
+
+    function when(epoch) {
+        const d = new Date(epoch * 1000)
+        const now = new Date()
+        const sameDay = d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate()
+        return sameDay ? Qt.formatTime(d, "HH:mm") : Qt.formatDate(d, "MMM d")
+    }
+
+    function refreshCounts() { countProc.running = true }
+    function refreshList() {
+        if (listProc.running) listProc.stale = true
+        else listProc.running = true
+    }
+    function act(verb, id) {
+        actionProc.command = [root.helper, verb, root.selected, id]
+        actionProc.running = true
+    }
+    function syncSelected() {
+        syncProc.command = [root.helper, "sync", root.selected]
+        syncProc.running = true
+    }
+
+    function select(account) {
+        root.selected = account
+        root.messages = []
+    }
+
+    active: popup.visible
+    onSelectedChanged: refreshList()
+
+    Process {
+        id: countProc
+        running: true
+        command: [root.helper, "counts"]
+        stdout: StdioCollector { onStreamFinished: { try { root.counts = JSON.parse(text) } catch (e) {} } }
+    }
+
+    Process {
+        id: listProc
+        property bool stale: false
+        command: [root.helper, "list", root.selected, "25"]
+        stdout: StdioCollector { onStreamFinished: { if (listProc.stale) return; try { root.messages = JSON.parse(text) } catch (e) {} } }
+        onExited: if (stale) { stale = false; running = true }
+    }
+
+    Process {
+        id: actionProc
+        onExited: { root.refreshList(); root.refreshCounts() }
+    }
+
+    Process {
+        id: syncProc
+        onExited: syncRefresh.restart()
+    }
+
+    Timer {
+        id: syncRefresh
+        interval: 4000
+        onTriggered: { root.refreshList(); root.refreshCounts() }
+    }
+
+    Timer {
+        interval: 10000
+        running: true
+        repeat: true
+        onTriggered: root.refreshCounts()
+    }
+
+    IpcHandler {
+        target: "mail"
+        function toggle(): void { popup.toggle() }
+    }
+
+    Row {
+        spacing: 6
+        BarText {
+            text: "󰇮"
+            color: root.totalUnread > 0 ? Theme.red : Theme.muted
+            font.pixelSize: Theme.barFontSize
+            width: 16
+            horizontalAlignment: Text.AlignHCenter
+        }
+        BarText {
+            text: root.accounts.map(a => root.counts[a] === undefined ? "-" : root.counts[a]).join("/")
+            color: root.totalUnread > 0 ? Theme.red : Theme.fg
+            font.pixelSize: Theme.barFontSize
+        }
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: popup.toggle()
+    }
+
+    component IconButton: BarText {
+        signal clicked
+        readonly property bool hovered: area.containsMouse
+        width: 22
+        height: 22
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        font.pixelSize: 15
+        color: area.containsMouse ? Theme.fg : Theme.muted
+        MouseArea { id: area; anchors.fill: parent; hoverEnabled: true; onClicked: parent.clicked() }
+    }
+
+    BarPopup {
+        id: popup
+        anchorItem: root
+        cardWidth: 480
+        wantsKeyboard: true
+        onVisibleChanged: if (visible) { root.refreshList(); root.refreshCounts() } else { root.filter = ""; root.searching = false }
+
+        Item {
+            width: parent.width
+            height: 28
+
+            Row {
+                spacing: 10
+                anchors.verticalCenter: parent.verticalCenter
+                BarText { text: "󰇮"; font.pixelSize: 18; width: 20; horizontalAlignment: Text.AlignHCenter }
+                BarText { text: "Inbox"; font.pixelSize: 17; font.bold: true }
+                Rectangle {
+                    anchors.verticalCenter: parent.verticalCenter
+                    radius: 4
+                    color: Theme.iconBg
+                    width: unreadLabel.implicitWidth + 12
+                    height: 20
+                    BarText { id: unreadLabel; anchors.centerIn: parent; text: (root.counts[root.selected] || 0) + " unread"; color: Theme.muted; font.pixelSize: 11 }
+                }
+            }
+
+            Row {
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 6
+                IconButton { text: "󰍉"; onClicked: { root.searching = !root.searching; if (!root.searching) root.filter = ""; else searchField.forceActiveFocus() } }
+                IconButton { text: "󰑐"; onClicked: root.syncSelected() }
+                IconButton { text: "󰏌"; onClicked: { Quickshell.execDetached(["ghostty", "-e", "aerc"]); popup.visible = false } }
+            }
+        }
+
+        Row {
+            width: parent.width
+            spacing: 4
+            Repeater {
+                model: root.accounts
+                Item {
+                    required property string modelData
+                    readonly property bool current: root.selected === modelData
+                    width: tabLabel.implicitWidth + 16
+                    height: 26
+                    BarText {
+                        id: tabLabel
+                        anchors.centerIn: parent
+                        text: parent.modelData + ((root.counts[parent.modelData] || 0) > 0 ? " " + root.counts[parent.modelData] : "")
+                        font.pixelSize: 12
+                        color: parent.current ? Theme.fg : (root.counts[parent.modelData] || 0) > 0 ? Theme.red : Theme.muted
+                    }
+                    Rectangle {
+                        visible: parent.current
+                        anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
+                        height: 2
+                        color: Theme.accent
+                    }
+                    MouseArea { anchors.fill: parent; onClicked: root.select(parent.modelData) }
+                }
+            }
+        }
+
+        Rectangle {
+            visible: root.searching
+            width: parent.width
+            height: 28
+            radius: 6
+            color: Theme.iconBg
+            TextInput {
+                id: searchField
+                anchors { fill: parent; leftMargin: 10; rightMargin: 10 }
+                verticalAlignment: TextInput.AlignVCenter
+                font.family: Theme.mono
+                font.pixelSize: 12
+                color: Theme.fg
+                clip: true
+                onTextChanged: root.filter = text
+                Keys.onEscapePressed: { root.searching = false; root.filter = ""; text = "" }
+                BarText { visible: searchField.text === ""; text: "Search sender or subject"; color: Theme.muted; font.pixelSize: 12; anchors.verticalCenter: parent.verticalCenter }
+            }
+        }
+
+        Divider {}
+
+        BarText {
+            visible: root.visibleMessages.length === 0
+            text: root.messages.length === 0 ? "Loading…" : "Nothing matches"
+            color: Theme.muted
+            font.pixelSize: 12
+        }
+
+        Item {
+            id: viewport
+            width: parent.width
+            height: Math.min(list.implicitHeight, 600)
+            clip: true
+
+            MouseArea {
+                anchors.fill: parent
+                propagateComposedEvents: true
+                onPressed: mouse => mouse.accepted = false
+                onWheel: wheel => {
+                    const maxOffset = Math.max(0, list.implicitHeight - viewport.height)
+                    list.y = Math.max(-maxOffset, Math.min(0, list.y + wheel.angleDelta.y))
+                }
+            }
+
+            Column {
+                id: list
+                width: parent.width
+                spacing: 2
+                onImplicitHeightChanged: y = 0
+
+                Repeater {
+                    model: root.visibleMessages
+
+                Rectangle {
+                    id: row
+                    required property var modelData
+                    width: parent.width
+                    height: 52
+                    radius: 6
+                    color: rowArea.containsMouse ? Theme.iconBg : "transparent"
+
+                    Rectangle { x: 6; anchors.verticalCenter: parent.verticalCenter; width: 6; height: 6; radius: 3; color: Theme.accent; visible: row.modelData.unread }
+
+                    Rectangle {
+                        x: 22
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 36; height: 36; radius: 6
+                        color: Theme.iconBg
+                        BarText { anchors.centerIn: parent; text: root.initials(row.modelData.from); font.bold: true; font.pixelSize: 12 }
+                    }
+
+                    Column {
+                        x: 68
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: parent.width - 68 - (rowArea.containsMouse ? 70 : 10)
+                        spacing: 3
+                        Item {
+                            width: parent.width
+                            height: 15
+                            BarText {
+                                text: row.modelData.from
+                                font.bold: row.modelData.unread
+                                color: row.modelData.unread ? Theme.fg : Theme.muted
+                                width: parent.width - 60
+                                elide: Text.ElideRight
+                            }
+                            BarText { anchors.right: parent.right; text: root.when(row.modelData.date); color: Theme.muted; font.pixelSize: 11 }
+                        }
+                        BarText {
+                            text: row.modelData.subject
+                            color: row.modelData.unread ? Theme.fg : Theme.muted
+                            font.pixelSize: 12
+                            width: parent.width
+                            elide: Text.ElideRight
+                        }
+                    }
+
+                    MouseArea {
+                        id: rowArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onClicked: if (row.modelData.unread) root.act("read", row.modelData.id)
+                    }
+
+                    Row {
+                        visible: rowArea.containsMouse || readBtn.hovered || trashBtn.hovered
+                        anchors.right: parent.right
+                        anchors.rightMargin: 8
+                        anchors.verticalCenter: parent.verticalCenter
+                        spacing: 4
+                        IconButton { id: readBtn; text: "󰇰"; visible: row.modelData.unread; onClicked: root.act("read", row.modelData.id) }
+                        IconButton { id: trashBtn; text: "󰆴"; onClicked: root.act("trash", row.modelData.id) }
+                    }
+                }
+            }
+            }
+        }
+    }
+}
