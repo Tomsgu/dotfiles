@@ -1,0 +1,276 @@
+#------------------------------------------------------------------------------
+# Dependencies to install
+#------------------------------------------------------------------------------
+# ghostty
+# rofi (2.0 has native wayland support, rofi-calc plugin needed for $calcmenu)
+# brave
+# aerc
+# yazi
+# grim
+# swaybg
+# handlr for configuring MIME database
+# slurp
+# wf-recorder
+# wl-clipboard
+# satty
+# polkit-gnome
+# brightnessctl (laptop only)
+
+#------------------------------------------------------------------------------
+# Optional dependencies
+#------------------------------------------------------------------------------
+# pass, browserpass, browserpass-firefox, browserpass-chromium - This needs
+#   pinentry-gnome3, for some reason I can't get pinentry-gtk to work.
+# mbsync, msmtp
+# 
+
+#------------------------------------------------------------------------------
+# Environment variables notes
+#------------------------------------------------------------------------------
+# All session variables live in ~/.config/environment.d/*.conf. The systemd user
+# manager reads them at login for services, and ~/.zshenv imports the same files
+# for shells. Sway therefore inherits them from the login shell, and only the
+# sway specific ones (WAYLAND_DISPLAY, SWAYSOCK, DISPLAY) are pushed back to
+# systemd and dbus at the end of this file.
+
+#------------------------------------------------------------------------------
+# Setup keyboard shortcuts
+#------------------------------------------------------------------------------
+set $mod Mod4
+
+# Home row direction keys, like vim
+set $left h
+set $down j
+set $up k
+set $right l
+
+# Preferred terminal emulator
+set $term ghostty
+
+# Preferred launcher 
+set $menu rofi -show drun 
+set $calcmenu rofi -show calc -modi calc -no-show-match -no-sort
+
+#set $menu wmenu-run
+
+# change focus
+bindsym $mod+$left focus left
+bindsym $mod+$down focus down
+bindsym $mod+$up focus up
+bindsym $mod+$right focus right
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+# Pulse Audio controls
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5% #increase sound volume
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5% #decrease sound volume
+bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle # mute sound
+
+# Screen brightness controls (laptop), needs brightnessctl.
+bindsym XF86MonBrightnessUp exec brightnessctl set +20%
+bindsym XF86MonBrightnessDown exec brightnessctl set 20%-
+
+# move focused window
+bindsym $mod+Shift+$left move left
+bindsym $mod+Shift+$down move down
+bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$right move right
+
+# split in horizontal orientation
+bindsym $mod+b split h
+
+# split in vertical orientation
+bindsym $mod+v split v
+
+# enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen toggle
+
+# change container layout (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# focus the parent container
+# bindsym $mod+a focus parent
+
+# switch to workspace
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace 1 
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+5 move container to workspace 5
+bindsym $mod+Shift+6 move container to workspace 6
+bindsym $mod+Shift+7 move container to workspace 7
+bindsym $mod+Shift+8 move container to workspace 8
+bindsym $mod+Shift+9 move container to workspace 9
+bindsym $mod+Shift+0 move container to workspace 10
+
+# reload the configuration file
+bindsym $mod+Shift+c reload
+
+#------------------------------------------------------------------------------
+# Keyboard shortcuts for applications
+#------------------------------------------------------------------------------
+# start a terminal
+bindsym $mod+Return exec $term
+bindsym $mod+Shift+w exec brave-origin-nightly
+bindsym $mod+u exec $term -e yazi # file manager
+bindsym $mod+i exec $term -e aerc  # email client
+bindsym $mod+o exec $term -e nvim ~/notes/
+bindsym $mod+Shift+o exec brave-origin-nightly --app=https://web.whatsapp.com
+bindsym $mod+a exec brave-origin-nightly --app=https://chatgpt.com
+bindsym $mod+Shift+d exec /home/tomsgu/.local/bin/toggle-dark # flip light/dark color-scheme
+
+# kill focused window
+bindsym $mod+q kill
+
+# start preffered launcher
+bindsym $mod+d exec $menu
+bindsym $mod+c exec $calcmenu
+
+#------------------------------------------------------------------------------
+# Input devices setup
+#------------------------------------------------------------------------------
+input "type:keyboard" {
+    xkb_layout us,cz
+    xkb_variant ,qwerty
+    xkb_options grp:alt_shift_toggle
+    xkb_numlock enabled
+}
+
+#------------------------------------------------------------------------------
+# Displays setup
+#------------------------------------------------------------------------------
+# Machine specific output lines go to ~/.config/sway/config.d/.
+include ~/.config/sway/config.d/*
+
+# Wallpaper
+output * bg /usr/share/backgrounds/archlinux/sunset.jpg fill
+
+# Adding gaps
+# gaps inner 10
+
+#------------------------------------------------------------------------------
+# Print screen
+#------------------------------------------------------------------------------
+# Screenshot of a dragged region or a clicked window: saved, copied, notification offers Edit.
+bindsym $mod+p exec ~/.local/bin/screenshot region
+# Screen recording: first press starts (drag a region or click a window), second press stops.
+bindsym $mod+Shift+p exec ~/.local/bin/screenrec
+bindsym $mod+Ctrl+p exec ~/.local/bin/screenrec mic
+
+#------------------------------------------------------------------------------
+# Fonts setup
+#------------------------------------------------------------------------------
+#font pango: 'JetBrainsMono Nerd Font 11'
+font pango: 'Iosevka Nerd Font Mono 11'
+
+#------------------------------------------------------------------------------
+# Resize mod
+#------------------------------------------------------------------------------
+mode "resize" {
+    bindsym $left resize shrink width 10 px or 10 ppt
+    bindsym $up resize grow height 10 px or 10 ppt
+    bindsym $down resize shrink height 10 px or 10 ppt
+    bindsym $right resize grow width 10 px or 10 ppt
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+#------------------------------------------------------------------------------
+# Start the bar (quickshell hot-reloads its config, so only start it when missing).
+#------------------------------------------------------------------------------
+exec_always sh -c 'pgrep -x qs >/dev/null || exec qs'
+
+#------------------------------------------------------------------------------
+# Sleep, hibernate, restart, shutdown mode.                                   |
+#------------------------------------------------------------------------------
+set $systemActions "(s)leep (h)ibernate (r)estart shut(d)own (l)ogout"
+mode $systemActions {
+    bindsym s exec systemctl suspend; mode "default"
+    bindsym h exec systemctl hibernate; mode "default"
+    bindsym d exec systemctl poweroff; mode "default"
+    bindsym r exec systemctl reboot; mode "default"
+    bindsym l exec swaymsg exit; mode "default"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+n mode $systemActions
+
+#------------------------------------------------------------------------------
+# Remove window titles completely
+#------------------------------------------------------------------------------
+default_border none
+bindsym $mod+Shift+x border none
+bindsym $mod+x border normal
+
+#------------------------------------------------------------------------------
+# Change cursor theme
+#------------------------------------------------------------------------------
+seat seat0 xcursor_theme capitaine-cursors-light 24
+
+#------------------------------------------------------------------------------
+# Setup gtk themes
+#------------------------------------------------------------------------------
+#set $gnome-schema org.gnome.desktop.interface
+#exec_always {
+#    gsettings set $gnome-schema gtk-theme ''
+#    gsettings set $gnome-schema icon-theme 
+#}
+
+#------------------------------------------------------------------------------
+# Applications behaviour
+#------------------------------------------------------------------------------
+for_window [app_id="org.gnome.Calculator"] floating enable
+
+#------------------------------------------------------------------------------
+# Startup applications
+#------------------------------------------------------------------------------
+exec gammastep-indicator
+exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+
+#exec xrandr --output XWAYLAND0 --primary
+
+# Tells at a glance which windows are using Xwayland
+for_window [shell="xwayland"] title_format "[XWayland] %title"
+
+# Disable DPMS (Energy Star) - suspend standby
+#exec xset -dpms
+
+exec systemctl --user set-environment XDG_CURRENT_DESKTOP=sway
+exec systemctl --user import-environment DISPLAY \
+                                         SWAYSOCK \
+                                         WAYLAND_DISPLAY \
+                                         XDG_CURRENT_DESKTOP
+
+exec hash dbus-update-activation-environment 2>/dev/null && \
+     dbus-update-activation-environment --systemd DISPLAY \
+                                                  SWAYSOCK \
+                                                  XDG_CURRENT_DESKTOP=sway \
+                                                  WAYLAND_DISPLAY
+
+# Starts user services enabled under graphical-session.target (e.g. librepods)
+exec systemctl --user start sway-session.target

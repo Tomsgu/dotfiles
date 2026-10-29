@@ -1,0 +1,35 @@
+# Interactive shells only. Environment comes from ~/.config/environment.d via ~/.zshenv.
+
+typeset -U path
+
+export ZSH="$XDG_CONFIG_HOME/oh-my-zsh"
+ZSH_THEME="agnoster"
+HIST_STAMPS="yyyy-mm-dd"
+plugins=(git direnv)
+source "$ZSH/oh-my-zsh.sh"
+
+alias vim='nvim'
+alias ls='eza --icons --time-style=long-iso --sort=type'
+alias ll='eza -lag --icons --time-style=long-iso --sort=type --extended'
+alias cargo='cargo --color always'
+alias mbsync="mbsync -a --config=$XDG_CONFIG_HOME/isync/isyncrc"
+alias signal-desktop='signal-desktop --enable-features=UseOzonePlatform --ozone-platform=wayland'
+
+# Change directory to where yazi was when it exited.
+function y() {
+  local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+  yazi "$@" --cwd-file="$tmp"
+  if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+    builtin cd -- "$cwd"
+  fi
+  rm -f -- "$tmp"
+}
+
+eval "$(mise activate zsh)"
+
+[ -f /project/Personal/fleet/completion.zsh ] && source /project/Personal/fleet/completion.zsh
+
+# Start sway from the first virtual console after login.
+if [ -z "$WAYLAND_DISPLAY" ] && [ -n "$XDG_VTNR" ] && [ "$XDG_VTNR" -eq 1 ]; then
+  "$HOME/bin/sway-run"
+fi

@@ -1,0 +1,6 @@
+export ZDOTDIR="$HOME/.config/zsh"
+
+# Import ~/.config/environment.d the same way the systemd user manager does.
+while IFS= read -r line; do
+  export "$line"
+done < <(/usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator)

@@ -1,0 +1,34 @@
+# Never managed: credentials and identity-bearing configs
+.config/git/credentials
+.config/msmtp
+.config/isync
+.config/imapnotify
+.config/aerc/accounts.conf
+.config/vdirsyncer
+.config/khal
+.ssh
+.gnupg
+.config/gh
+.netrc
+.env
+.env.*
+
+# Caches, backups, vendored plugins
+.config/zsh/.zcompdump*
+.config/tmux/plugins
+.config/ghostty/*.bak
+.config/aerc/backup
+.config/aerc/aerc-new.conf
+.config/nvim-backup
+
+# Replaced by Quickshell
+.config/waybar
+.config/mako
+
+# Repo-only files
+README.md
+
+# Per-host sway files
+{{ if ne .host "desktop" }}
+.config/sway/config.d/desktop.conf
+{{ end }}

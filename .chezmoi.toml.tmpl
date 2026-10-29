@@ -1,0 +1,27 @@
+{{- $name := promptStringOnce . "name" "Git author name" -}}
+{{- $email := promptStringOnce . "email" "Git author email" -}}
+{{- $signingkey := promptStringOnce . "signingkey" "Git signing key id (empty for none)" -}}
+{{- $latitude := promptStringOnce . "latitude" "Home latitude (decimal)" -}}
+{{- $longitude := promptStringOnce . "longitude" "Home longitude (decimal)" -}}
+{{- $place := promptStringOnce . "place" "Weather place name" -}}
+{{- $host := promptStringOnce . "host" "Host role (desktop or laptop)" -}}
+{{- $mail := list -}}
+{{- if hasKey . "mail" }}{{ $mail = .mail }}{{ end -}}
+
+[data]
+    name = {{ $name | quote }}
+    email = {{ $email | quote }}
+    signingkey = {{ $signingkey | quote }}
+    latitude = {{ $latitude | quote }}
+    longitude = {{ $longitude | quote }}
+    place = {{ $place | quote }}
+    host = {{ $host | quote }}
+    # Mail accounts for the Quickshell mail widget: label shown in the bar,
+    # dir under ~/Mail, trash folder name. Edit this file to add accounts.
+    mail = [
+{{- range $mail }}
+        { label = {{ .label | quote }}, dir = {{ .dir | quote }}, trash = {{ .trash | default "Trash" | quote }} },
+{{- end }}
+    ]
+[edit]
+    apply = true
